@@ -77,7 +77,7 @@ function _M.get_access_token()
 	if not appid or not secret then
 		return nil, "get appid or secret is nil"
 	end
-	local uri = "https://api.weixin.qq.com"	
+	local uri = config['general_domain']
 	local method = "GET"
 	local path = "/cgi-bin/token"
 	local body = "grant_type=client_credential&appid="..appid.."&secret="..secret
@@ -119,7 +119,7 @@ function _M.get_callback_ip()
 	end
 	
 	-- cjson.encode(access_token_tb) = {"access_token":"ACCESS_TOKEN","expires_in":7200}
-	local uri = "https://api.weixin.qq.com"
+	local uri = config['general_domain']
 	local path = "/cgi-bin/getcallbackip"
 	
 	local body = "access_token=" .. access_token
@@ -147,5 +147,18 @@ function _M.get_callback_ip()
 	else
 		return nil, "无法解析获取服务器ip的返回信息"
 	end
+end
+
+-- 网络检测
+function _M.check_net()
+	-- 获取access_token
+	local access_token, err = _M.get_access_token()
+	if not access_token then
+		return nil, err
+	end
+
+	local uri = config['general_domain']
+	local path = "/cig-bin/callback/check"
+	
 end
 return _M
