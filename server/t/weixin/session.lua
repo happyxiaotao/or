@@ -65,8 +65,12 @@ local function get_http_data(uri, params)
 		httpc:close()
 		return nil, err
 	end
-
 	httpc:close()
+
+	if res.status ~= 200 then
+		local err = "http status : " .. res.status
+		return nil, err
+	end
 	return res
 end
 
@@ -74,7 +78,7 @@ end
 function _M.get_access_token()
 	local appid = config['AppID']
 	local secret = config['AppSecret']
-	if not appid or not secret then
+	if not appid or not secret then 
 		return nil, "get appid or secret is nil"
 	end
 	local uri = config['general_domain']
@@ -86,16 +90,10 @@ function _M.get_access_token()
 		path = path .. "?" ..body,
 	--	path = path,		-- 使用者中方式调用的话一直报错
 	--	body = body,		-- {"errcode":41002,"errmsg":"appid missing hint: [QucVcA06721533]"}
-		headers = {
-			["User-Agent"] = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0",
-		}
 	}
 
 	local res, err = get_http_data(uri, params)
-	if not res then
-		return nil, err
-	elseif res.status ~= 200 then
-		err = "http status : " .. res.status
+	if not res then 
 		return nil, err
 	end
 		
@@ -115,7 +113,7 @@ function _M.get_callback_ip()
 	-- 获取access_token
 	local access_token, err = _M.get_access_token()
 	if not access_token then
-		return nil, err
+		return nil, err 
 	end
 	
 	-- cjson.encode(access_token_tb) = {"access_token":"ACCESS_TOKEN","expires_in":7200}
@@ -133,9 +131,6 @@ function _M.get_callback_ip()
 
 	local res, err = get_http_data(uri, params)
 	if not res then
-		return nil, err
-	elseif res.status ~= 200 then
-		err = "http status : " .. res.status
 		return nil, err
 	end
 
@@ -158,7 +153,32 @@ function _M.check_net()
 	end
 
 	local uri = config['general_domain']
-	local path = "/cig-bin/callback/check"
+	local method = "POST"
+	local path = "/cig-bin/callback/check?access_toekn=" .. access_token
+	local body_tb = {
+		action = "all",
+		check_operator = "DEFAULT"
+	}
+	local body_json, err = cjson.encode(body_tb)
+	if not body_json then
+		return nil, err
+	end
 	
+	local params = {
+		uri = uri,
+		method = method,
+		path = path,
+		body = body_json
+	}	
+	say("uri = " .. uri)
+	say("path = " .. path)
+	say("body = " .. body_json)
+
+	local res, err = get_http_data(uri, params)
+	if not res then	
+		return nil, err
+	end
+	
+	say(res)
 end
 return _M

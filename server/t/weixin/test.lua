@@ -29,12 +29,17 @@ function _M:test_get_callback_ip()
 	return self['session'].get_callback_ip()
 end
 
+-- 网络检测
+function _M:test_check_net()
+	return self['session'].check_net()
+end
+
 function _M:start_test()
 	-- 1,测试基础支持
 	-- (1)获取access_token
 	local res, err = self:test_get_access_token()
 	if not res then
-		say("测试get_access_token失败, err:"..err)
+		say("测试get_access_token失败, err:" .. err)
 		return nil, err
 	else
 		say("测试get_access_token成功")
@@ -42,12 +47,19 @@ function _M:start_test()
 
 	res, err = self:test_get_callback_ip()
 	if not res then
-		say("测试get_callback_ip失败, err:"..err)
+		say("测试get_callback_ip失败, err:" .. err)
 		return nil, err
 	else
 		say("测试get_callback_ip成功")
 	end
 
+	res, err = self:test_check_net()
+	if not res then
+		say("测试网络检测功能失败, err:" .. err)
+		return nil, err
+	else
+		say("测试网络检测功能成功")
+	end
 
 	return true
 end
