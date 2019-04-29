@@ -12,6 +12,7 @@ local _M = {
 	hk_domain = "https://hk.weixin.qq.com",				-- 香港域名
 	
 
+	token = "xsfh",				-- 用户自定义的token，用来连接用户服务器	
 
 	AppID = "wxe86b6ed68cbb0ddb",			-- 第三方用户唯一凭证
 	AppSecret = "afce5868a7cc9f87a7f7f66a00806573",	-- 第三方用户唯一凭证密钥

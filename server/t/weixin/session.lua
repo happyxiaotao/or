@@ -12,7 +12,7 @@
 ]]--
 
 local config = require("weixin.config")
-local cjson = require("cjson")
+local cjson = require("cjson.safe")
 local say = ngx.say
 
 local _M = {
@@ -144,41 +144,4 @@ function _M.get_callback_ip()
 	end
 end
 
--- 网络检测
-function _M.check_net()
-	-- 获取access_token
-	local access_token, err = _M.get_access_token()
-	if not access_token then
-		return nil, err
-	end
-
-	local uri = config['general_domain']
-	local method = "POST"
-	local path = "/cig-bin/callback/check?access_toekn=" .. access_token
-	local body_tb = {
-		action = "all",
-		check_operator = "DEFAULT"
-	}
-	local body_json, err = cjson.encode(body_tb)
-	if not body_json then
-		return nil, err
-	end
-	
-	local params = {
-		uri = uri,
-		method = method,
-		path = path,
-		body = body_json
-	}	
-	say("uri = " .. uri)
-	say("path = " .. path)
-	say("body = " .. body_json)
-
-	local res, err = get_http_data(uri, params)
-	if not res then	
-		return nil, err
-	end
-	
-	say(res)
-end
 return _M

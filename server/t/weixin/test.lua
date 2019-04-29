@@ -10,13 +10,13 @@
 (4)用户管理
 ]]--
 
-
 local say = ngx.say
 local _M = {
 	__date = "2019-04-22"
 }
 
 _M['session'] = require("t.weixin.session")
+
 
 --(1) 测试基础支持
 -- 获取access_token
@@ -29,12 +29,9 @@ function _M:test_get_callback_ip()
 	return self['session'].get_callback_ip()
 end
 
--- 网络检测
-function _M:test_check_net()
-	return self['session'].check_net()
-end
-
 function _M:start_test()
+	local start_time = ngx.req.start_time()
+	local cur_time = ngx.now()
 	-- 1,测试基础支持
 	-- (1)获取access_token
 	local res, err = self:test_get_access_token()
@@ -44,6 +41,9 @@ function _M:start_test()
 	else
 		say("测试get_access_token成功")
 	end
+	start_test = cur_time
+	cur_time = ngx.now()
+	say("use time: " .. cur_time - start_test)
 
 	res, err = self:test_get_callback_ip()
 	if not res then
@@ -52,16 +52,10 @@ function _M:start_test()
 	else
 		say("测试get_callback_ip成功")
 	end
+	start_test = cur_time
+	cur_time = ngx.now()
+	say("use time: " .. cur_time - start_test)
 
-	res, err = self:test_check_net()
-	if not res then
-		say("测试网络检测功能失败, err:" .. err)
-		return nil, err
-	else
-		say("测试网络检测功能成功")
-	end
-
-	return true
 end
 
 
